@@ -109,9 +109,52 @@ defineProps({
 
 ## 4. Les emits — envoyer un événement vers le parent
 
-Quand l'enfant doit communiquer vers le parent (ex. : l'utilisateur a cliqué sur une carte), il **émet un événement**.
+### Pourquoi les emits?
 
-**Dans le composant enfant** — émettre un événement :
+On vient de voir que les props font descendre les données du parent vers l'enfant. Mais que se passe-t-il quand c'est l'enfant qui doit parler au parent — par exemple, l'utilisateur a cliqué sur une carte de pays?
+
+**Un enfant ne peut pas modifier les props qu'il reçoit**, et il ne devrait pas modifier l'état du parent directement non plus. La solution propre : l'enfant **émet un événement** (comme un signal), et le parent choisit d'y réagir ou non.
+
+C'est exactement le même principe que les événements natifs du navigateur : un `<button>` ne sait pas ce qui se passera quand on le clique — il émet simplement un événement `click`, et c'est le code qui l'écoute qui décide quoi faire.
+
+```text
+Parent  ──── props ────▶  Enfant
+Parent  ◀─── emits ────   Enfant
+```
+
+### `defineEmits` — déclarer les événements de l'enfant
+
+`defineEmits()` remplit deux rôles : il **documente** quels événements le composant peut émettre, et il retourne une **fonction `emit`** qu'on appellera pour déclencher ces événements.
+
+```vue
+<script setup>
+// On déclare la liste des événements que ce composant peut émettre
+const emit = defineEmits(['paysSelectionne'])
+//                        ↑
+//               nom de l'événement (chaîne de caractères)
+</script>
+```
+
+On peut déclarer plusieurs événements si nécessaire :
+
+```vue
+const emit = defineEmits(['paysSelectionne', 'paysSurvole', 'favoriModifie'])
+```
+
+### Émettre un événement avec une valeur
+
+`emit()` prend deux arguments : le **nom de l'événement** et une **valeur optionnelle** à transmettre au parent (appelée le *payload*).
+
+```vue
+emit('paysSelectionne', props.cca3)
+//    ↑ nom              ↑ valeur transmise au parent
+```
+
+Le payload peut être n'importe quelle valeur — une chaîne, un nombre, un objet entier, etc.
+
+### Exemple complet — enfant + parent
+
+**Composant enfant** (`CartePaysComponent.vue`) — il émet quand l'utilisateur clique :
 
 ```vue
 <!-- src/components/CartePaysComponent.vue -->
@@ -126,18 +169,21 @@ Quand l'enfant doit communiquer vers le parent (ex. : l'utilisateur a cliqué su
 const props = defineProps({
   nom: String,
   drapeau: String,
-  cca3: String
+  cca3: String        // le code unique du pays, ex. "CAN"
 })
 
+// 1. On déclare l'événement et on récupère la fonction emit
 const emit = defineEmits(['paysSelectionne'])
 
 function selectionner() {
-  emit('paysSelectionne', props.cca3)  // on envoie le code du pays
+  // 2. On émet l'événement en passant le code du pays comme valeur
+  emit('paysSelectionne', props.cca3)
+  //    ↑ nom de l'événement    ↑ payload = la valeur reçue par le parent
 }
 </script>
 ```
 
-**Dans le composant parent** — écouter l'événement :
+**Composant parent** (`ArchiveView.vue`) — il écoute l'événement avec `@nomEvenement` :
 
 ```vue
 <!-- src/views/ArchiveView.vue -->
@@ -149,15 +195,30 @@ function selectionner() {
     :drapeau="pays.flags.svg"
     :cca3="pays.cca3"
     @paysSelectionne="allerVersDetails"
+    <!-- ↑ quand l'enfant émet 'paysSelectionne', appeler allerVersDetails -->
   />
 </template>
 
 <script setup>
+// codePays reçoit automatiquement la valeur émise (le payload)
 function allerVersDetails(codePays) {
-  console.log('Pays sélectionné :', codePays)
+  console.log('Pays sélectionné :', codePays)  // ex. "CAN"
   // Navigation vers la page détails — voir Fiche 05
 }
 </script>
+```
+
+> **Lecture de `@paysSelectionne="allerVersDetails"`** : "quand cet enfant émet l'événement `paysSelectionne`, appelle la fonction `allerVersDetails` en lui passant la valeur émise."
+
+### Comparaison props / emits en un coup d'œil
+
+| | Props | Emits |
+| --- | --- | --- |
+| **Direction** | Parent → Enfant | Enfant → Parent |
+| **Déclaration** | `defineProps({...})` | `defineEmits([...])` |
+| **Utilisation côté enfant** | Lire la valeur reçue | Appeler `emit('nom', valeur)` |
+| **Utilisation côté parent** | Passer avec `:maProp="valeur"` | Écouter avec `@monEvent="maFonction"` |
+| **Analogie** | Paramètres d'une fonction | Valeur de retour / callback |
 
 ## 5. Les slots — composants de mise en page
 
