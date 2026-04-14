@@ -1,4 +1,4 @@
-# Exercice - Liste de tâches : Du HTML statique à Vue 3
+# Exercice 1 - Liste de tâches : Du HTML statique à Vue 3
 
 ## HTML de départ
 
