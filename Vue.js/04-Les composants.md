@@ -58,7 +58,7 @@ src/
 </template>
 
 <script setup>
-import CartePays from '@/components/CartePaysComponent.vue'
+import CartePays from '@/components/CartePays.vue'
 // ...
 </script>
 ```
@@ -72,7 +72,7 @@ Les **props** sont les paramètres d'un composant. Le parent lui passe des valeu
 **Dans le composant enfant** — déclarer les props :
 
 ```vue
-<!-- src/components/CartePaysComponent.vue -->
+<!-- src/components/CartePays.vue -->
 <template>
   <div class="carte">
     <img :src="drapeau" :alt="nom" />
@@ -154,10 +154,10 @@ Le payload peut être n'importe quelle valeur — une chaîne, un nombre, un obj
 
 ### Exemple complet — enfant + parent
 
-**Composant enfant** (`CartePaysComponent.vue`) — il émet quand l'utilisateur clique :
+**Composant enfant** (`CartePays.vue`) — il émet quand l'utilisateur clique :
 
 ```vue
-<!-- src/components/CartePaysComponent.vue -->
+<!-- src/components/CartePays.vue -->
 <template>
   <div class="carte" @click="selectionner">
     <img :src="drapeau" :alt="nom" />
