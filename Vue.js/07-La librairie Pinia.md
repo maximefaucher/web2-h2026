@@ -233,4 +233,4 @@ src/
 
 ---
 
-*Vous avez maintenant les 7 fiches pour développer votre application avec Vue.js!*
+*Il ne manque plus qu'une fiche pour développer votre application avec Vue.js → **Fiche 08 : Formulaires avec Vue***
