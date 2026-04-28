@@ -275,6 +275,4 @@ liste-de-taches/
 
 ---
 
-**Vous voilà fin(e) prêt(e) pour compléter votre application Vue.js!**
-
-*Bon travail!*
+**Il ne manque plus qu'une étape pour compléter l'application : l'ajout d'un formulaire!**
